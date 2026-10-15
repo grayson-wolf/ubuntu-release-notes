@@ -440,6 +440,25 @@ AMQP 1.0, and also MQTT, STOMP and streams (through plugins).
 * Mnesia and Parition Handling Strategies are Removed
 * Classic Queues v1 Storage (CQv1) is Removed
 
+#### dovecot 2.4.4
+
+Dovecot is a secure, high-performance IMAP and POP3 mail server. It supports Maildir/mdbox storage,
+Sieve filtering (Pigeonhole) and LMTP delivery. It also has full-text search (FTS) plugins,
+many authentication backends (PAM, SQL, LDAP, Lua, GSSAPI), and TLS. The packages
+include `dovecot-core`, `dovecot-imapd`, `dovecot-pop3d`, `dovecot-sieve`, `dovecot-managesieved`,
+`dovecot-lmtpd` and the database driver plugins.
+
+* There are experimental features in 2.4, one is enabled with --enable-experimental-mail-utf8,
+and another with --enable-experimental-imap4rev2, and you also need to set
+mail_utf8_extensions=yes and imap4rev2_enabled=yes to enable them in config.
+* `login` is no longer part of the default `auth_mechanisms`.
+* Improve UTF-8 support for mail storage.
+* auth: Add default auth-token UNIX socket for token-based authentication.
+* lib-sql: Support parameterized queries.
+* lmtp: Support XCLIENT DESTADDR and DESTPORT
+* pop3-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
+* submission-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
+
 ### Development features
 
 #### Toolchain upgrades
