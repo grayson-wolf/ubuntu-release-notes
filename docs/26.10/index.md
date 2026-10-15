@@ -430,6 +430,16 @@ and user-mode emulation. The packages include `qemu-system-*`, `qemu-utils` (qem
 * `ipxe-qemu` and `seabios` are now `Depends` of every `qemu-system-ARCH`.
 * Dropped the dependency on deprecated `edk2` armhf firmware.
 
+#### rabbitmq-server 4.3.2
+
+RabbitMQ is an open-source message broker written in Erlang/OTP. It supports AMQP 0-9-1 and
+AMQP 1.0, and also MQTT, STOMP and streams (through plugins).
+
+* Migrated to Erlang 29
+* Initial Support for AMQP 1.0 Filter Expressions
+* Mnesia and Parition Handling Strategies are Removed
+* Classic Queues v1 Storage (CQv1) is Removed
+
 ### Development features
 
 #### Toolchain upgrades
