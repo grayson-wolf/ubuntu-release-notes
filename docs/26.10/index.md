@@ -414,7 +414,6 @@ For details, bug fixes, and known issues, refer to the [26.10 release notes](htt
 
 ### Cloud features
 
-* EC2 images built with Imagecraft are available as preview images.
 * GCE minimal images no longer have recommends installed, making them even smaller.
 * OKE (Oracle Kubernetes Engine) 1.36 support added.
 * AppArmor feature support added for 7.2 and 7.3 kernels ([LP: #2167455](https://bugs.launchpad.net/ubuntu/+source/livecd-rootfs/+bug/2167455) and [LP: #2168878](https://bugs.launchpad.net/ubuntu/+source/livecd-rootfs/+bug/2168878)).
