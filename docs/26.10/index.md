@@ -459,6 +459,20 @@ mail_utf8_extensions=yes and imap4rev2_enabled=yes to enable them in config.
 * pop3-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
 * submission-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
 
+### exim4 4.99.4
+
+Exim is a mail transfer agent (MTA) for Unix systems. It is highly configurable, with
+a flexible ACL and routing language. It supports TLS, DKIM, DMARC, PROXY protocol,
+SMTP AUTH, and lookups in SQL/LDAP/DBM backends. Debian and Ubuntu package it as
+`exim4-base`, `exim4-config`, `exim4-daemon-light`, `exim4-daemon-heavy`, the new
+`exim4-daemon-mod` and `exim4-dev`.
+
+ * **4.99.2** fixes CVE-2026-40684, CVE-2026-40685, CVE-2026-40686 and CVE-2026-40687.
+  These are a musl DNS crash, OOB read/write on JSON, UTF-8 and SPA authenticator input.
+* **4.99.3** fixes CVE-2026-45185, a use-after-free in GnuTLS BDAT/CHUNKING.
+  The same release includes the earlier fix for a one-byte write into a freed buffer (LP: #2152202).
+* **4.99.4** fixes CVE-2026-48840, an uninitialised-stack disclosure in the PROXYv2 parser.
+
 ### Development features
 
 #### Toolchain upgrades
