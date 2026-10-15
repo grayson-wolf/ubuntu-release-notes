@@ -360,6 +360,76 @@ The Subiquity Ubuntu installer has been updated to version 26.10. New features i
 
 For details, bug fixes, and known issues, refer to the [26.10 release notes](https://github.com/canonical/subiquity/releases/tag/26.10) post on GitHub.
 
+#### edk2 2026.05
+
+`edk2` is the open-source reference implementation of UEFI/PI firmware. In Ubuntu it provides the `ovmf`
+family of virtual-machine firmware packages (`ovmf`, `ovmf-generic`, `ovmf-legacy`,
+`ovmf-amdsev`, `ovmf-inteltdx`), architecture-specific QEMU firmware
+(`qemu-efi-aarch64`, `qemu-efi-riscv64`, `qemu-efi-loongarch64`), and standalone UEFI shells
+(`efi-shell-x64`, `efi-shell-aa64`, `efi-shell-riscv64`, `efi-shell-loongarch64`). These are
+used as firmware for QEMU/KVM and confidential-computing (AMD SEV-SNP, Intel TDX) virtual
+machines.
+
+* `OvmfPkg/PlatformPei`: do not enable S3 support for confidential VMs.
+  - `OvmfPkg/BaseMemEncryptSevLib`: treat IGVM data HOB ranges as prevalidated.
+  - `OvmfPkg/IgvmSecureBootDxe`: do not return early with CustomMode enabled.
+  - `OvmfPkg/PlatformInitLib`: add `SoftReserved` memory type support; redefine
+    low memory; reserve the IGVM parameter area.
+  - `OvmfPkg/IntelTdx`: add a toggle to disable the firmware UI; README fix for
+    the build command.
+  - `OvmfPkg`: set `PcdRequireSelfSignedPk` to `FALSE`; flip the default for
+    `EnableLegacyLoader` to false in `X86QemuLoadImageLib`; page-align DXE/UEFI
+    driver image sections; disable lockbox functionality for StandaloneMm;
+    enable memory debug log for AmdSev and Microvm.
+  - `UefiCpuPkg, MdeModulePkg, OvmfPkg`: use 256 IDT descriptors in SEC/PEI/SMM.
+* **LoongArch64**: `OvmfPkg/LoongArchVirt` gained Secure Boot support, FPDT
+  enablement, a fix for misuse of `ExtractGuidedSectionLib`, and moved
+  `FirmwarePerformancePei` to the PEI driver region; LoongArch64 support was
+  also extended to `BaseRngLib`, `EmbeddedPkg`, `NetworkPkg` RNG mapping,
+  `RedfishPkg`, and `MdePkg` IOVT structures; exception-handling/vector fixes
+  in `UefiCpuPkg`.
+* **ArmVirt**: increased firmware size; `ArmPlatformLibQemu` now supports an
+  early ID map on LPA2-capable CPUs (the fix Ubuntu's earlier LPA2 reverts
+  were waiting for); `ArmVirtQemu` exposes `DEBUG_TO_MEM` as a build option;
+  bug fixes for ArmVirtKvmtool guest firmware (Arm CCA v5 s1).
+* **Security hardening** (`SecurityPkg`, `BaseTools`, `NetworkPkg`):
+  - `BaseTools`: fixed potential security issues in `VfrCompiler` and others.
+  - `SecurityPkg/Tcg2Smm`: hardened NVS/SMI state initialization.
+  - `SecurityPkg/AuthVariableLib`: handle empty signature lists.
+  - `SecurityPkg`: fixed `Tcg2SubmitCommand` behavior in TPM field-upgrade and
+    general scenarios; fixed a TPM-over-FFA ACPI table endianness error;
+    updated bundled `libspdm` to 3.7.0.
+  - A new **software TPM library** was introduced in `TcgTpmPkg` for
+    software-based TPM implementations.
+
+#### libvirt 12.6.0
+
+libvirt is a toolkit and daemon for managing virtualization platforms. It provides
+a stable API, the `virsh` CLI and `libvirtd`/modular daemons. Its main drivers are
+QEMU/KVM, LXC, Xen, Cloud Hypervisor, and others. Features include storage pools,
+virtual networks, live migration, snapshots, and security confinement (AppArmor, SELinux).
+
+* The QEMU driver is dropped on 32-bit architectures, since they are no longer supported
+  as QEMU 11.0 hosts.
+* Group-based socket access is **dropped**. Ubuntu now follows the upstream/Debian default
+  of **polkit**. `d/NEWS` documents the migration.
+* libvirt's secrets are now encrypted. A new one-shot systemd service is created to
+  provision the encryption keys. On upgrade, the existing non encrypted secrets are still
+  available but remain non encrypted.
+
+#### qemu 11.0
+
+QEMU is a generic machine emulator and virtualizer. With KVM it runs guests at near-native speed.
+It also offers full system emulation for many architectures (x86, ARM, RISC-V, s390x, ppc64, ...)
+and user-mode emulation. The packages include `qemu-system-*`, `qemu-utils` (qemu-img, qemu-nbd),
+`qemu-guest-agent` and `qemu-block-extra`.
+
+* 32-bit host builds are dropped (armhf, i386). Only 64-bit hosts are supported.
+  This cause the removal of qemu-system and qemu-user packages on 32-bits.
+* `qemu-system-microblazeel` is removed. `qemu-system-microblaze -M endianness=big/little` replaces it.
+* `ipxe-qemu` and `seabios` are now `Depends` of every `qemu-system-ARCH`.
+* Dropped the dependency on deprecated `edk2` armhf firmware.
+
 ### Development features
 
 #### Toolchain upgrades
