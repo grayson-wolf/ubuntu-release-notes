@@ -850,7 +850,7 @@ See [Postfix Non-Berkeley-DB migration](https://www.postfix.org/NON_BERKELEYDB_R
 ### Cloud deprecations
 
 * pollinate dropped from server-cloud-minimal seed ([LP: #2158262](https://bugs.launchpad.net/ubuntu/+source/ubuntu-meta/+bug/2158262)).
-  * xxd dropped from minimal images as it was a dependency of pollinate
+  * `xxd` dropped from minimal images as it was a dependency of pollinate
 
 <!-- ### Security deprecations -->
 
