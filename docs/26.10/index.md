@@ -650,6 +650,107 @@ retained due to compatibility issues, have now been migrated.
 
 To switch between the Rust and GNU implementations of coreutils, refer to {ref}`resolute-rust-coreutils`.
 
+#### AMD ROCm 10.0
+
+The AMD ROCm software stack in the Universe repository has been updated from version 7.1.0, shipped in Ubuntu 26.04 LTS, to version 10.0. The whole stack was upgraded in lockstep, including the compiler, the HIP and HSA runtimes, the system management tools, and the math, AI and communication libraries.
+
+Highlights since ROCm 7.1.0 include:
+
+- ROCm is now built and released upstream through [TheRock](https://github.com/ROCm/TheRock), its unified build system, since ROCm 7.14.
+- The ROCm compiler is now provided by the `llvm-toolchain-rocm` source package, the AMD fork of the LLVM toolchain. It ships `clang-rocm`, `lld-rocm`, `hipcc-rocm`, the device libraries, Comgr and OpenMP offloading support. The whole ROCm stack is now built with this compiler instead of the standard Ubuntu LLVM toolchain.
+- The libraries are additionally built for the `gfx10-3-generic` and `gfx11-generic` targets. This extends support to more RDNA 2 and RDNA 3 GPUs and APUs that don't have a dedicated build target, such as the Radeon RX 6600, RX 6700 and RX 7600 Series.
+- Added the `gfx950` target for AMD Instinct MI350 Series GPUs.
+- New libraries: `composable-kernel`, `hipfort`, `hipsparselt` and `migraphx`.
+- HIP adds cooperative groups inclusive and exclusive scan APIs, `hipMemGetDefaultMemPool`, and faster `hipEventRecord`.
+- The ROCr runtime can generate GPU core dumps while a debugger is attached.
+- rocSPARSE and hipSPARSE add Blocked ELL format support, and CSC format support for sparse triangular solves.
+- rocPRIM adds parallel top-K algorithms.
+- RCCL extends symmetric memory support with a Reduce-Scatter kernel.
+
+:::{dropdown} Supported hardware
+The ROCm libraries are built for the following GPU architectures:
+
+| GFX ISA | Hardware family |
+|---|---|
+| `gfx908` | Instinct™ MI100 |
+| `gfx90a` | Instinct MI210, MI250 |
+| `gfx942` | Instinct MI300, MI325 |
+| `gfx950` | Instinct MI350, MI355 |
+| `gfx1030` | Navi21 / Radeon™ RX 6800, RX 6900 Series, PRO V620 |
+| `gfx10-3-generic` | Other RDNA 2 GPUs and APUs (`gfx1030` to `gfx1036`), such as Radeon RX 6600, RX 6700 Series |
+| `gfx1100` | Navi31 / Radeon RX 7900 Series |
+| `gfx1101` | Navi32 / Radeon RX 7700, RX 7800 Series |
+| `gfx11-generic` | Other RDNA 3 and RDNA 3.5 GPUs and APUs (`gfx1100` to `gfx1103`, `gfx1150` to `gfx1153`), such as Radeon RX 7600 Series |
+| `gfx1151` | Strix Halo / Ryzen™ AI MAX 300 Series (Radeon 8040S, 8050S, 8060S) |
+| `gfx1200` | Navi44 / Radeon RX 9050, RX 9060 Series |
+| `gfx1201` | Navi48 / Radeon RX 9070 Series, AI PRO R9700 |
+:::
+
+::::{dropdown} ROCm libraries
+The following ROCm source packages are included at version 10.0:
+
+:::{hlist}
+:columns: 3
+
+- `amdsmi`
+- `composable-kernel`
+- `hipblas`
+- `hipblas-common`
+- `hipblaslt`
+- `hipcub`
+- `hipfft`
+- `hipfort`
+- `hipify`
+- `hiprand`
+- `hipsolver`
+- `hipsparse`
+- `hipsparselt`
+- `llvm-toolchain-rocm`
+- `migraphx`
+- `miopen`
+- `rccl`
+- `rocalution`
+- `rocblas`
+- `rocdbgapi`
+- `rocfft`
+- `rocm`
+- `rocm-cmake`
+- `rocm-core`
+- `rocm-hipamd`
+- `rocm-smi-lib`
+- `rocminfo`
+- `rocprim`
+- `rocr-runtime`
+- `rocrand`
+- `rocsolver`
+- `rocsparse`
+- `rocthrust`
+- `roctracer`
+- `rocwmma`
+:::
+::::
+
+:::{dropdown} Install the ROCm software stack
+In most scenarios, you don't have to install these packages directly: the individual libraries are installed as dependencies of applications as needed. However, if you want to install the ROCm stack yourself, you can do it in two ways:
+
+- Install the complete ROCm software stack, including binaries and header files:
+
+    ```bash
+    apt install rocm
+    ```
+
+- Install only the development libraries and header files for developing ROCm-enabled applications:
+
+    ```bash
+    apt install rocm-dev
+    ```
+
+:::
+
+ROCm 10.0 includes some API and ABI changes. The AMD SMI library SONAME changed to `libamd_smi.so.27`, so software using it has to be rebuilt, and several deprecated AMD SMI APIs were removed. The deprecated `rocsparse_indextype_u16` type was also removed from rocSPARSE.
+
+For details, see the [ROCm 10.0.0 release notes](https://rocm.docs.amd.com/en/docs-10.0.0/about/release-notes.html).
+
 ### WSL features
 
 The Ubuntu Pro for WSL app is now published for both AMD64 and ARM64.
