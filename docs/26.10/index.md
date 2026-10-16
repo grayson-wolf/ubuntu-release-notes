@@ -360,6 +360,119 @@ The Subiquity Ubuntu installer has been updated to version 26.10. New features i
 
 For details, bug fixes, and known issues, refer to the [26.10 release notes](https://github.com/canonical/subiquity/releases/tag/26.10) post on GitHub.
 
+#### edk2 2026.05
+
+`edk2` is the open-source reference implementation of UEFI/PI firmware. In Ubuntu it provides the `ovmf`
+family of virtual-machine firmware packages (`ovmf`, `ovmf-generic`, `ovmf-legacy`,
+`ovmf-amdsev`, `ovmf-inteltdx`), architecture-specific QEMU firmware
+(`qemu-efi-aarch64`, `qemu-efi-riscv64`, `qemu-efi-loongarch64`), and standalone UEFI shells
+(`efi-shell-x64`, `efi-shell-aa64`, `efi-shell-riscv64`, `efi-shell-loongarch64`). These are
+used as firmware for QEMU/KVM and confidential-computing (AMD SEV-SNP, Intel TDX) virtual
+machines.
+
+* `OvmfPkg/PlatformPei`: do not enable S3 support for confidential VMs.
+  - `OvmfPkg/BaseMemEncryptSevLib`: treat IGVM data HOB ranges as prevalidated.
+  - `OvmfPkg/IgvmSecureBootDxe`: do not return early with CustomMode enabled.
+  - `OvmfPkg/PlatformInitLib`: add `SoftReserved` memory type support; redefine
+    low memory; reserve the IGVM parameter area.
+  - `OvmfPkg/IntelTdx`: add a toggle to disable the firmware UI; README fix for
+    the build command.
+  - `OvmfPkg`: set `PcdRequireSelfSignedPk` to `FALSE`; flip the default for
+    `EnableLegacyLoader` to false in `X86QemuLoadImageLib`; page-align DXE/UEFI
+    driver image sections; disable lockbox functionality for StandaloneMm;
+    enable memory debug log for AmdSev and Microvm.
+  - `UefiCpuPkg, MdeModulePkg, OvmfPkg`: use 256 IDT descriptors in SEC/PEI/SMM.
+* **LoongArch64**: `OvmfPkg/LoongArchVirt` gained Secure Boot support, FPDT
+  enablement, a fix for misuse of `ExtractGuidedSectionLib`, and moved
+  `FirmwarePerformancePei` to the PEI driver region; LoongArch64 support was
+  also extended to `BaseRngLib`, `EmbeddedPkg`, `NetworkPkg` RNG mapping,
+  `RedfishPkg`, and `MdePkg` IOVT structures; exception-handling/vector fixes
+  in `UefiCpuPkg`.
+* **ArmVirt**: increased firmware size; `ArmPlatformLibQemu` now supports an
+  early ID map on LPA2-capable CPUs (the fix Ubuntu's earlier LPA2 reverts
+  were waiting for); `ArmVirtQemu` exposes `DEBUG_TO_MEM` as a build option;
+  bug fixes for ArmVirtKvmtool guest firmware (Arm CCA v5 s1).
+* **Security hardening** (`SecurityPkg`, `BaseTools`, `NetworkPkg`):
+  - `BaseTools`: fixed potential security issues in `VfrCompiler` and others.
+  - `SecurityPkg/Tcg2Smm`: hardened NVS/SMI state initialization.
+  - `SecurityPkg/AuthVariableLib`: handle empty signature lists.
+  - `SecurityPkg`: fixed `Tcg2SubmitCommand` behavior in TPM field-upgrade and
+    general scenarios; fixed a TPM-over-FFA ACPI table endianness error;
+    updated bundled `libspdm` to 3.7.0.
+  - A new **software TPM library** was introduced in `TcgTpmPkg` for
+    software-based TPM implementations.
+
+#### libvirt 12.6.0
+
+libvirt is a toolkit and daemon for managing virtualization platforms. It provides
+a stable API, the `virsh` CLI and `libvirtd`/modular daemons. Its main drivers are
+QEMU/KVM, LXC, Xen, Cloud Hypervisor, and others. Features include storage pools,
+virtual networks, live migration, snapshots, and security confinement (AppArmor, SELinux).
+
+* The QEMU driver is dropped on 32-bit architectures, since they are no longer supported
+  as QEMU 11.0 hosts.
+* Group-based socket access is **dropped**. Ubuntu now follows the upstream/Debian default
+  of **polkit**. `d/NEWS` documents the migration.
+* libvirt's secrets are now encrypted. A new one-shot systemd service is created to
+  provision the encryption keys. On upgrade, the existing non encrypted secrets are still
+  available but remain non encrypted.
+
+#### qemu 11.0
+
+QEMU is a generic machine emulator and virtualizer. With KVM it runs guests at near-native speed.
+It also offers full system emulation for many architectures (x86, ARM, RISC-V, s390x, ppc64, ...)
+and user-mode emulation. The packages include `qemu-system-*`, `qemu-utils` (qemu-img, qemu-nbd),
+`qemu-guest-agent` and `qemu-block-extra`.
+
+* 32-bit host builds are dropped (armhf, i386). Only 64-bit hosts are supported.
+  This cause the removal of qemu-system and qemu-user packages on 32-bits.
+* `qemu-system-microblazeel` is removed. `qemu-system-microblaze -M endianness=big/little` replaces it.
+* `ipxe-qemu` and `seabios` are now `Depends` of every `qemu-system-ARCH`.
+* Dropped the dependency on deprecated `edk2` armhf firmware.
+
+#### rabbitmq-server 4.3.2
+
+RabbitMQ is an open-source message broker written in Erlang/OTP. It supports AMQP 0-9-1 and
+AMQP 1.0, and also MQTT, STOMP and streams (through plugins).
+
+* Migrated to Erlang 29
+* Initial Support for AMQP 1.0 Filter Expressions
+* Mnesia and Parition Handling Strategies are Removed
+* Classic Queues v1 Storage (CQv1) is Removed
+
+#### dovecot 2.4.4
+
+Dovecot is a secure, high-performance IMAP and POP3 mail server. It supports Maildir/mdbox storage,
+Sieve filtering (Pigeonhole) and LMTP delivery. It also has full-text search (FTS) plugins,
+many authentication backends (PAM, SQL, LDAP, Lua, GSSAPI), and TLS. The packages
+include `dovecot-core`, `dovecot-imapd`, `dovecot-pop3d`, `dovecot-sieve`, `dovecot-managesieved`,
+`dovecot-lmtpd` and the database driver plugins.
+
+* There are experimental features in 2.4, one is enabled with --enable-experimental-mail-utf8,
+and another with --enable-experimental-imap4rev2, and you also need to set
+mail_utf8_extensions=yes and imap4rev2_enabled=yes to enable them in config.
+* `login` is no longer part of the default `auth_mechanisms`.
+* Improve UTF-8 support for mail storage.
+* auth: Add default auth-token UNIX socket for token-based authentication.
+* lib-sql: Support parameterized queries.
+* lmtp: Support XCLIENT DESTADDR and DESTPORT
+* pop3-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
+* submission-login: proxy - Add support for XCLIENT DESTIP and DESTPORT
+
+### exim4 4.99.4
+
+Exim is a mail transfer agent (MTA) for Unix systems. It is highly configurable, with
+a flexible ACL and routing language. It supports TLS, DKIM, DMARC, PROXY protocol,
+SMTP AUTH, and lookups in SQL/LDAP/DBM backends. Debian and Ubuntu package it as
+`exim4-base`, `exim4-config`, `exim4-daemon-light`, `exim4-daemon-heavy`, the new
+`exim4-daemon-mod` and `exim4-dev`.
+
+ * **4.99.2** fixes CVE-2026-40684, CVE-2026-40685, CVE-2026-40686 and CVE-2026-40687.
+  These are a musl DNS crash, OOB read/write on JSON, UTF-8 and SPA authenticator input.
+* **4.99.3** fixes CVE-2026-45185, a use-after-free in GnuTLS BDAT/CHUNKING.
+  The same release includes the earlier fix for a one-byte write into a freed buffer (LP: #2152202).
+* **4.99.4** fixes CVE-2026-48840, an uninitialised-stack disclosure in the PROXYv2 parser.
+
 ### Development features
 
 #### Toolchain upgrades
