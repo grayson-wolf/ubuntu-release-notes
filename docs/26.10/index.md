@@ -1000,9 +1000,13 @@ On some laptops with both AMD integrated graphics and a discrete GPU, the built-
 
 Some systems with Intel Wi-Fi 6E AX211 might experience firmware crashes and dropped Wi-Fi connections. The issue is hardware-specific and remains under investigation for Stonking. See [LP: #2157682](https://bugs.launchpad.net/bugs/2157682).
 
-#### Keyboard might not work on some Snapdragon X2 Elite laptops
+#### Keyboard might not work on some Snapdragon X Elite laptops
 
-Due to a regression in Linux 7.3, the kernel sometimes selects an incorrect keyboard clock rate on some Snapdragon X2 Elite laptops. As a consequence, the built-in keyboard is unusable, including in the live installer. A fix is being investigated. See [LP: #2169765](https://bugs.launchpad.net/bugs/2169765).
+Due to a regression in Linux 7.3, the kernel sometimes selects an incorrect keyboard clock rate on some Snapdragon X2 Elite laptops. As a consequence, the built-in keyboard is unusable, including in the live installer. Users are advised to perform the installation with an external USB keyboard plugged in. A fix is being investigated. See [LP: #2169765](https://bugs.launchpad.net/bugs/2169765).
+
+#### Wifi doesn't come back after suspend on some Snapdragon X Elite laptops
+
+A kernel bug ([LP: #2169326](https://bugs.launchpad.net/bugs/2169326)) is preventing the Wifi to come back online after suspend. A workaround is available in the bug, and the proper fix will be delivered through the regular update mechanism.
 
 #### Intel IPU cameras might fail during early boot or suspend
 
