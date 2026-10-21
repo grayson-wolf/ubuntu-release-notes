@@ -211,6 +211,31 @@ Upstream release notes are available in the [Mysql 9.7 documentation library](ht
 
 MySQL Shell was updated to 9.7.1 to support the new MySQL LTS version. See the [upstream release notes](https://dev.mysql.com/doc/relnotes/mysql-shell/9.7/en/) for more information.
 
+### MariaDB
+
+MariaDB has been updated to 11.8.9. The upstream release notes can be found
+[here](https://mariadb.com/docs/release-notes/community-server/11.8/11.8.9)
+
+MariaDB and MySQL can now be installed side by side. To make this possible,
+MariaDB's configuration moved from `/etc/mysql` to `/etc/mariadb`, and its
+runtime files moved from `/run/mysqld` to `/run/mariadbd`. Your existing
+configuration is preserved during the upgrade, but if you have modified
+`/etc/mysql/mariadb.conf.d/50-server.cnf` you must update the `pid-file`
+line in `/etc/mariadb/mariadb.conf.d/50-server.cnf` to point to
+`/run/mariadbd/mysqld.pid`, otherwise the MariaDB server will fail to
+start after a reboot (see [LP #2171444](https://bugs.launchpad.net/ubuntu/+source/mariadb/+bug/2171444)). 
+Any custom configuration files in `/etc/mysql/conf.d`
+must be moved to `/etc/mariadb/mariadb.conf.d` manually.
+
+The legacy `mysql` command names are no longer installed by default.
+Scripts using `mysql`, `mysqldump`, `mysqladmin` or `mysqld` should either
+switch to the `mariadb-*` equivalents, or you can restore the old names by
+installing `mariadb-client-compat` and `mariadb-server-compat`.
+
+Note for mixed fleets: MariaDB 11.8 clients require TLS and cannot connect
+to MariaDB 10.11 servers (which ship with TLS disabled). Upgrade database
+servers before client hosts, or pass `--skip-ssl` during the transition.
+
 #### Valkey
 
 Valkey was updated to the latest major release 9.1, starting with 9.1.2. This includes various performance and security threat model improvements.
