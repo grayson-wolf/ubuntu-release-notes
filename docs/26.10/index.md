@@ -498,6 +498,19 @@ SMTP AUTH, and lookups in SQL/LDAP/DBM backends. Debian and Ubuntu package it as
   The same release includes the earlier fix for a one-byte write into a freed buffer (LP: #2152202).
 * **4.99.4** fixes CVE-2026-48840, an uninitialised-stack disclosure in the PROXYv2 parser.
 
+### Nginx
+
+Nginx has been updated from 1.28 to 1.30. The upstream release notes can
+be found [here](https://nginx.org/en/CHANGES-1.30)
+
+Some defaults were changed:
+- The `keepalive` directive in `upstream` blocks is now enabled by
+  default, the default `proxy_http_version` is now `1.1`, and the
+  `Connection` header is no longer sent to proxied backends.
+- Validation of the request-line host and the `Host`/`:authority` headers
+  was tightened; requests with a malformed `Host` header are now rejected
+  with HTTP 400.
+
 ### Development features
 
 #### Toolchain upgrades
